@@ -60,52 +60,62 @@ def save_json(content, filename):
 
 if __name__ == '__main__':
 	data = [] # 数据整体存储，初始化为空
-	html = get_page('http://www.mtime.com/top/movie/top100/').text # 获得当前页面
-	for offset_index in range(1, 11): # 提取当前页面的各电影信息
-		mov_index = offset_index # 电影的完整序号
-		print('\n'+str(mov_index))
-		chunk_exp = re.compile(r'<li.*?<em>'+str(mov_index)+r'</em>.*?<div(.*?)mov_point.*?</div>', re.S) # 获取整块文本
-		chunk = extract(html, chunk_exp)[0]
+	for page_index in range(1, 11): # 页码
+		# 计算 URL
+		if page_index == 1: # 首页
+			url = 'http://www.mtime.com/top/movie/top100/'
+		else: # 后续页
+			url = 'http://www.mtime.com/top/movie/top100/' + 'index-' + str(page_index) + '.html'
 
-		info = {} # 新增列表项
+		html = get_page(url).text # 获得当前页面
 
-		# 提取具体信息
-		# 海报
-		pic_exp = re.compile(r'mov_pic.*?img.*?src="(.*?)"', re.S)
-		pic_url = extract(chunk, pic_exp)
-		pic_name = 'pic' + os.path.sep + str(mov_index)
-		#download_pic(pic_url[0], pic_name)
+		for offset_index in range(1, 11): # 提取当前页面的各电影信息
+			mov_index = offset_index + 10 * (page_index - 1) # 电影的完整序号
+			print('\n'+str(mov_index))
+			chunk_exp = re.compile(r'<li.*?<em>'+str(mov_index)+r'</em>.*?<div(.*?)mov_point.*?</div>', re.S) # 获取整块文本
+			chunk = extract(html, chunk_exp)[0]
 
-		# 标题
-		title_exp = re.compile(r'h2.*?_blank">(.*?)</a>', re.S)
-		title_inf = extract(chunk, title_exp)
-		info["title"] = title_inf[0]
-		print(info["title"])
+			info = {} # 新增列表项
 
-		# 导演
-		director_exp = re.compile(r'导演.*?_blank">(.*?)</a>', re.S)
-		director_inf = extract(chunk, director_exp)
-		info["director"] = director_inf[0]
-		print(info["director"])
+			# 提取具体信息
+			# 海报
+			pic_exp = re.compile(r'mov_pic.*?img.*?src="(.*?)"', re.S)
+			pic_url = extract(chunk, pic_exp)
+			pic_name = 'pic' + os.path.sep + str(mov_index)
+			#download_pic(pic_url[0], pic_name)
 
-		# 主演
-		actor_exp0 = re.compile(r'主演.*?</p>.*?类型', re.S)
-		actor_chunk = extract(chunk, actor_exp0)
-		actor_exp1 = re.compile(r'_blank">(.*?)</a>', re.S)
-		actor_inf = extract(actor_chunk[0], actor_exp1)
-		info["actor"] = actor_inf # 类型为列表
-		print(info["actor"])
+			# 标题
+			title_exp = re.compile(r'h2.*?_blank">(.*?)</a>', re.S)
+			title_inf = extract(chunk, title_exp)
+			info["title"] = title_inf[0]
+			print(info["title"])
 
-		# 类型
-		genre_exp0 = re.compile(r'类型(.*?)mt3', re.S)
-		genre_chunk = extract(chunk, genre_exp0)
-		genre_exp1 = re.compile(r'_blank">(.*?)</a>', re.S)
-		genre_inf = extract(genre_chunk[0], genre_exp1)
-		info["genre"] = genre_inf # 类型为列表
-		print(info["genre"])
+			# 导演
+			director_exp = re.compile(r'导演.*?_blank">(.*?)</a>', re.S)
+			director_inf = extract(chunk, director_exp)
+			info["director"] = director_inf[0]
+			print(info["director"])
 
-		# 简介
-		summary_exp = re.compile(r'mt3">(.*?)</p>')
-		summary_inf = extract(chunk, summary_exp)
-		info["summary"] = summary_inf[0]
-		print(info["summary"])
+			# 主演
+			actor_exp0 = re.compile(r'主演.*?</p>.*?类型', re.S)
+			actor_chunk = extract(chunk, actor_exp0)
+			actor_exp1 = re.compile(r'_blank">(.*?)</a>', re.S)
+			actor_inf = extract(actor_chunk[0], actor_exp1)
+			info["actor"] = actor_inf # 类型为列表
+			print(info["actor"])
+
+			# 类型
+			genre_exp0 = re.compile(r'类型(.*?)mt3', re.S)
+			genre_chunk = extract(chunk, genre_exp0)
+			genre_exp1 = re.compile(r'_blank">(.*?)</a>', re.S)
+			genre_inf = extract(genre_chunk[0], genre_exp1)
+			info["genre"] = genre_inf # 类型为列表
+			print(info["genre"])
+
+			# 简介
+			summary_exp = re.compile(r'mt3">(.*?)</p>')
+			summary_inf = extract(chunk, summary_exp)
+			info["summary"] = summary_inf[0]
+			print(info["summary"])
+
+			data.append(info) # 新增列表项
