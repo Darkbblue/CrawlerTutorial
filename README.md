@@ -1,4 +1,4 @@
-# CrawlerTurorial
+# CrawlerTutorial
 A simple crawler only for tutorial purpose
 ## Intro
 This in only for tutorial purpose. Don't put it in illegal usage.
