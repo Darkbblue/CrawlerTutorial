@@ -51,7 +51,8 @@ def download_pic(url, name):
 		f.write(pic)
 
 # 根据传入的文件内容和文件名保存 json 文件
-def save_json(content, filename):
+def save_json(content, name):
+	filename = name + '.json'
 	j_file = json.dumps(content) # 转换到 json 文件
 	with open(filename, 'w', encoding='utf-8') as f:
 		f.write(j_file)
@@ -125,3 +126,7 @@ if __name__ == '__main__':
 			print(info["summary"])
 
 			data.append(info) # 新增列表项
+
+	# 保存记录
+	filename = 'info'
+	save_json(data, filename)
