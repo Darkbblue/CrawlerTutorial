@@ -13,18 +13,6 @@ import json
 def get_page(url):
 	# headers 伪装
 	headers = {
-#		'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
-		'Accept-Encoding': 'gzip, deflate, br',
-#		'Accept-Language': 'zh-CN,zh;q=0.9',
-#		'Cache-Control': 'max-age=0',
-#		'Connection': 'keep-alive',
-		'Cookie': '_userCode_=2020103141518275; _userIdentity_=20201031415185687; homePageType=B; _tt_=E3E7E8FFD8DAEFF072B7611A4E334CE5; DefaultCity-CookieKey=290; userId=0; defaultCity=%25E5%258C%2597%25E4%25BA%25AC%257C290; Hm_lvt_6dd1e3b818c756974fb222f0eae5512e=1601705718; strIdCity=China_Beijing; __utma=196937584.942153368.1601705718.1601705718.1601705718.1; __utmc=196937584; __utmz=196937584.1601705718.1.1.utmcsr=google|utmccn=(organic)|utmcmd=organic|utmctr=(not%20provided); __utmt=1; __utmt_~1=1; maxShowNewbie=2; _userCode_=20201031415296208; _userIdentity_=20201031415292744; __utmb=196937584.4.10.1601705718; Hm_lpvt_6dd1e3b818c756974fb222f0eae5512e=1601705872',
-#		'Host': 'movie.douban.com',
-#		'Sec-Fetch-Dest': 'document',
-#		'Sec-Fetch-Mode': 'navigate',
-#		'Sec-Fetch-Site': 'none',
-#		'Sec-Fetch-User': '?1',
-#		'Upgrade-Insecure-Requests': 1,
 		'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.121 Safari/537.36',
 	}
 	# 增大请求间隔
