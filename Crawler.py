@@ -99,17 +99,23 @@ if __name__ == '__main__':
 			# 主演
 			actor_exp0 = re.compile(r'主演.*?</p>.*?类型', re.S)
 			actor_chunk = extract(chunk, actor_exp0)
-			actor_exp1 = re.compile(r'_blank">(.*?)</a>', re.S)
-			actor_inf = extract(actor_chunk[0], actor_exp1)
-			info["actor"] = actor_inf # 类型为列表
+			if actor_chunk: # 若不为空
+				actor_exp1 = re.compile(r'_blank">(.*?)</a>', re.S)
+				actor_inf = extract(actor_chunk[0], actor_exp1)
+				info["actor"] = actor_inf # 类型为列表
+			else:
+				info["actor"] = [] # 空列表
 			print(info["actor"])
 
 			# 类型
 			genre_exp0 = re.compile(r'类型(.*?)mt3', re.S)
 			genre_chunk = extract(chunk, genre_exp0)
-			genre_exp1 = re.compile(r'_blank">(.*?)</a>', re.S)
-			genre_inf = extract(genre_chunk[0], genre_exp1)
-			info["genre"] = genre_inf # 类型为列表
+			if genre_chunk: # 若不为空
+				genre_exp1 = re.compile(r'_blank">(.*?)</a>', re.S)
+				genre_inf = extract(genre_chunk[0], genre_exp1)
+				info["genre"] = genre_inf # 类型为列表
+			else:
+				info["genre"] = [] # 空列表
 			print(info["genre"])
 
 			# 简介
