@@ -61,6 +61,9 @@ def save_json(content, name):
 
 if __name__ == '__main__':
 	data = [] # 数据整体存储，初始化为空
+	if not os.path.exists('pic'): # 创建保存图片的文件夹
+		os.makedirs('pic')
+
 	for page_index in range(1, 11): # 页码
 		# 计算 URL
 		if page_index == 1: # 首页
@@ -83,7 +86,7 @@ if __name__ == '__main__':
 			pic_exp = re.compile(r'mov_pic.*?img.*?src="(.*?)"', re.S)
 			pic_url = extract(chunk, pic_exp)
 			pic_name = 'pic' + os.path.sep + str(mov_index)
-			#download_pic(pic_url[0], pic_name)
+			download_pic(pic_url[0], pic_name)
 
 			# 标题
 			title_exp = re.compile(r'h2.*?_blank">(.*?)</a>', re.S)
