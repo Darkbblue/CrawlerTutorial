@@ -134,13 +134,6 @@ if __name__ == '__main__':
 			info['region'] = region_inf
 			info['genre'] = genre_inf
 			print('\t{} {} {}'.format(date_inf, region_inf, genre_inf))
-			continue
-
-			# 简介
-			summary_exp = re.compile(r'mt3">(.*?)</p>')
-			summary_inf = extract(chunk, summary_exp)
-			info["summary"] = summary_inf[0]
-			print(info["summary"])
 
 			data.append(info) # 新增列表项
 
