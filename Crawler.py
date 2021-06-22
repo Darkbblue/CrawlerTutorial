@@ -8,10 +8,16 @@ import re
 import os
 import json
 
-# ---------------------------- #
-# 根据传入的 URL 发送 GET 申请
-# 返回类型需要再取 .text 对象才是相应文本
+
+# ----- 工具组件 ----- #
+
+
 def get_page(url):
+	'''
+	获取单个 url 的资源
+	:para url: str
+	:return: 一个包装后的对象，一般需要取 .text 才是相应文本
+	'''
 	# headers 伪装
 	headers = {
 		'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.121 Safari/537.36',
@@ -20,44 +26,61 @@ def get_page(url):
 	sleep(random.uniform(3, 7))
 
 	# 发送正式请求
-	i = 0 # 重试计数器
+	i = 0  # 重试计数器
 	while i < 5:
 		try:
 			response = requests.get(url, headers=headers, timeout=5)
-			if response.status_code == 200: # 若正常获取则返回结果
+			if response.status_code == 200:  # 若正常获取则返回结果
 				return response
 			else:
 				raise requests.exceptions.RequestException
 		except requests.exceptions.RequestException:
 			print('!reconnecting!')
 			sleep(random.uniform(0.5, 1))
-			i += 1 # 若出现错误，则进行有限次数重试
-	return None # 超出重试次数后则放弃本次获取
-				# 用户可以选择进行其他处理，如跳过本页面
+			i += 1  # 若出现错误，则进行有限次数重试
+	return None  # 超出重试次数后则放弃本次获取
+				 # 用户可以选择进行其他处理，如跳过本页面
 
-# 根据传入的文本和正则表达式进行信息提取
-# 返回类型是一个列表
-def extract(html, exp):
-	result = re.findall(exp, html)
-	return result
 
-# 根据传入的 URL 获取图片，并根据传入的名称保存图片
-def download_pic(url, name):
-	filename = name + '.jpg' # 完成文件名
-	if os.path.exists(filename): # 跳过已下载的图片
+def get_pic(url, name):
+	'''
+	获取图片，并按照给定名称进行保存
+	:para url: 图片资源的 url
+	:para name: 文件名，不包含扩展名部分
+	'''
+	filename = name + '.jpg'
+	if os.path.exists(filename):  # 跳过已下载的图片
 		return
-	pic = get_page(url).content # 图片内容
-	with open(filename, 'wb+') as f: # 写入文件
+	pic = get_page(url).content
+	with open(filename, 'wb+') as f:
 		f.write(pic)
 
-# 根据传入的文件内容和文件名保存 json 文件
+
+def extract(text, exp):
+	'''
+	使用给定的正则表达式，从给定的文本中提取信息
+	:para text: str
+	:para exp: re.compile() 的返回值类型
+	:return: list，返回全部符合正则表达式的匹配结果
+	'''
+	result = re.findall(exp, text)
+	return result
+
+
 def save_json(content, name):
+	'''
+	保存内容为 json 文件
+	:para content: list or dict
+	:para name: str
+	'''
 	filename = name + '.json'
-	j_file = json.dumps(content) # 转换到 json 文件
+	j_file = json.dumps(content)  # 转换到 json 文件
 	with open(filename, 'w', encoding='utf-8') as f:
 		f.write(j_file)
 
-# --------------------------------- #
+
+# ----- 主逻辑 ----- #
+
 
 if __name__ == '__main__':
 	data = [] # 数据整体存储，初始化为空
