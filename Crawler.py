@@ -83,24 +83,27 @@ def save_json(content, name):
 
 
 if __name__ == '__main__':
-	data = [] # 数据整体存储，初始化为空
-	if not os.path.exists('pic'): # 创建保存图片的文件夹
+	# 数据存储
+	data = []
+	# 创建保存图片的文件夹
+	if not os.path.exists('pic'):
 		os.makedirs('pic')
 
-	for page_index in range(1, 11): # 页码
-		# 计算 URL
-		if page_index == 1: # 首页
-			url = 'http://www.mtime.com/top/movie/top100/'
-		else: # 后续页
-			url = 'http://www.mtime.com/top/movie/top100/' + 'index-' + str(page_index) + '.html'
+	# url 跳转：顺序修改 url
+	for page_index in range(0, 250, 25): # 页码
+		url = 'https://movie.douban.com/top250?start={}&filter='.format(page_index)
 
-		html = get_page(url).text # 获得当前页面
+		# 获得当前页面
+		html = get_page(url).text
 
-		for offset_index in range(1, 11): # 提取当前页面的各电影信息
-			mov_index = offset_index + 10 * (page_index - 1) # 电影的完整序号
-			print('\n'+str(mov_index))
-			chunk_exp = re.compile(r'<li.*?<em>'+str(mov_index)+r'</em>.*?<div(.*?)mov_point.*?</div>', re.S) # 获取整块文本
-			chunk = extract(html, chunk_exp)[0]
+		# 遍历当前页面的各电影
+		html = extract(html, re.compile(r'<ol class="grid_view">(.*?)</ol>', re.S))[0]
+		chunks = extract(html, re.compile(r'<li>(.*?)</li>', re.S))
+		for i, chunk in enumerate(chunks):
+			film_index = page_index + i + 1
+			title = extract(chunk, re.compile(r'<span class="title">(.*?)</span>', re.S))[0]
+			print(film_index, title)
+			continue
 
 			info = {} # 新增列表项
 
