@@ -12,6 +12,14 @@ import json
 # ----- 工具组件 ----- #
 
 
+def get_proxy():
+	return json.loads(requests.get('http://127.0.0.1:5010/get/').text)['proxy']
+
+
+def delete_proxy(proxy):
+	requests.get('http://127.0.0.1:5010/delete?proxy={}'.format(proxy))
+
+
 def get_page(url):
 	'''
 	获取单个 url 的资源
@@ -29,10 +37,16 @@ def get_page(url):
 	i = 0  # 重试计数器
 	while i < 5:
 		try:
-			response = requests.get(url, headers=headers, timeout=5)
+			# 代理
+			proxy = get_proxy()
+			response = requests.get(
+				url, headers=headers, timeout=5,
+				proxies={'http': 'http://{}'.format(proxy), 'https': 'https://{}'.format(proxy)}
+			)
 			if response.status_code == 200:  # 若正常获取则返回结果
 				return response
 			else:
+				delete_proxy(proxy)
 				raise requests.exceptions.RequestException
 		except requests.exceptions.RequestException:
 			print('!reconnecting!')
