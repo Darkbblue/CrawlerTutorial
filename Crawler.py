@@ -116,7 +116,7 @@ if __name__ == '__main__':
 			pic_exp = re.compile(r'<div class="pic">.*?<img.*?src="(.*?)".*?>.*?</div>', re.S)
 			pic_url = extract(chunk, pic_exp)
 			pic_name = 'pic' + os.path.sep + str(film_index) + ' ' + str(info['title'])
-			get_pic(pic_url[0], pic_name)
+			#get_pic(pic_url[0], pic_name)
 
 			# 导演
 			director_exp = re.compile(r'<div class="bd">.*?导演: (.*?)&.*?</div>', re.S)
@@ -125,15 +125,20 @@ if __name__ == '__main__':
 			print('\t{}'.format(info['director']))
 
 			# 上映日期+地区+类型
-			general_exp = re.compile(r'<div class="bd">.*?<br>(.*?)</p>.*?</div>', re.S)
-			general_inf = extract(chunk, general_exp)[0].replace('&nbsp;', '').split('/')
-			date_inf = general_inf[0].replace('\n', '').replace(' ', '')
-			region_inf = general_inf[1].split(' ')
-			genre_inf = extract(general_inf[2], re.compile(r'(.*)\n', re.S))[0].split(' ')
-			info['date'] = date_inf
-			info['region'] = region_inf
-			info['genre'] = genre_inf
-			print('\t{} {} {}'.format(date_inf, region_inf, genre_inf))
+			try:
+				general_exp = re.compile(r'<div class="bd">.*?<br>(.*?)</p>.*?</div>', re.S)
+				general_inf = extract(chunk, general_exp)[0].replace('&nbsp;', '').split('/')
+				date_inf = general_inf[0].replace('\n', '').replace(' ', '')
+				region_inf = general_inf[1].split(' ')
+				genre_inf = extract(general_inf[2], re.compile(r'(.*)\n', re.S))[0].split(' ')
+				info['date'] = date_inf
+				info['region'] = region_inf
+				info['genre'] = genre_inf
+				print('\t{} {} {}'.format(date_inf, region_inf, genre_inf))
+			except:
+				info['date'] = '0'
+				info['region'] = []
+				info['genre'] = []
 
 			data.append(info) # 新增列表项
 
