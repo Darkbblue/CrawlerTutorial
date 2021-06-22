@@ -101,52 +101,40 @@ if __name__ == '__main__':
 		chunks = extract(html, re.compile(r'<li>(.*?)</li>', re.S))
 		for i, chunk in enumerate(chunks):
 			film_index = page_index + i + 1
-			title = extract(chunk, re.compile(r'<span class="title">(.*?)</span>', re.S))[0]
-			print(film_index, title)
-			continue
 
-			info = {} # 新增列表项
-
-			# 提取具体信息
-			# 海报
-			pic_exp = re.compile(r'mov_pic.*?img.*?src="(.*?)"', re.S)
-			pic_url = extract(chunk, pic_exp)
-			pic_name = 'pic' + os.path.sep + str(mov_index)
-			download_pic(pic_url[0], pic_name)
+			# 对应当前电影的列表项
+			info = {}
+			info['index'] = film_index
 
 			# 标题
-			title_exp = re.compile(r'h2.*?_blank">(.*?)</a>', re.S)
+			title_exp = re.compile(r'<span class="title">(.*?)</span>', re.S)
 			title_inf = extract(chunk, title_exp)
-			info["title"] = title_inf[0]
-			print(info["title"])
+			info['title'] = title_inf[0]
+			print('{}\t{}'.format(film_index, info['title']))
+
+			# 海报
+			pic_exp = re.compile(r'<div class="pic">.*?<img.*?src="(.*?)".*?>.*?</div>', re.S)
+			pic_url = extract(chunk, pic_exp)
+			pic_name = 'pic' + os.path.sep + str(film_index) + ' ' + str(info['title'])
+			get_pic(pic_url[0], pic_name)
 
 			# 导演
-			director_exp = re.compile(r'导演.*?_blank">(.*?)</a>', re.S)
+			director_exp = re.compile(r'<div class="bd">.*?导演: (.*?)&.*?</div>', re.S)
 			director_inf = extract(chunk, director_exp)
-			info["director"] = director_inf[0]
-			print(info["director"])
+			info['director'] = director_inf[0].split(' / ')
+			print('\t{}'.format(info['director']))
 
-			# 主演
-			actor_exp0 = re.compile(r'主演.*?</p>.*?类型', re.S)
-			actor_chunk = extract(chunk, actor_exp0)
-			if actor_chunk: # 若不为空
-				actor_exp1 = re.compile(r'_blank">(.*?)</a>', re.S)
-				actor_inf = extract(actor_chunk[0], actor_exp1)
-				info["actor"] = actor_inf # 类型为列表
-			else:
-				info["actor"] = [] # 空列表
-			print(info["actor"])
-
-			# 类型
-			genre_exp0 = re.compile(r'类型(.*?)mt3', re.S)
-			genre_chunk = extract(chunk, genre_exp0)
-			if genre_chunk: # 若不为空
-				genre_exp1 = re.compile(r'_blank">(.*?)</a>', re.S)
-				genre_inf = extract(genre_chunk[0], genre_exp1)
-				info["genre"] = genre_inf # 类型为列表
-			else:
-				info["genre"] = [] # 空列表
-			print(info["genre"])
+			# 上映日期+地区+类型
+			general_exp = re.compile(r'<div class="bd">.*?<br>(.*?)</p>.*?</div>', re.S)
+			general_inf = extract(chunk, general_exp)[0].replace('&nbsp;', '').split('/')
+			date_inf = general_inf[0].replace('\n', '').replace(' ', '')
+			region_inf = general_inf[1].split(' ')
+			genre_inf = extract(general_inf[2], re.compile(r'(.*)\n', re.S))[0].split(' ')
+			info['date'] = date_inf
+			info['region'] = region_inf
+			info['genre'] = genre_inf
+			print('\t{} {} {}'.format(date_inf, region_inf, genre_inf))
+			continue
 
 			# 简介
 			summary_exp = re.compile(r'mt3">(.*?)</p>')
